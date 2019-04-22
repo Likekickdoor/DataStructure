@@ -1,2 +1,2 @@
 # DataStructure
-I hava described datastructure with algorithm by Java
+I hava described datastructure and algorithm with Java
