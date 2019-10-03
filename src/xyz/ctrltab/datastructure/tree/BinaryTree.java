@@ -108,6 +108,69 @@ public class BinaryTree {
 				p = p.rchild;
 			}
 		}while(p!=null || !st.IsEmpty());
+	}	
+	// 非递归中序遍历
+	public void InOrder2() {
+		BinaryTree p = this;
+		SequenStack<BinaryTree> st = new SequenStack<BinaryTree>();//栈容量10,使用链栈不用考虑此问题		
+		while(p != null || !st.IsEmpty()){
+			// 一直将根结点和其左子结点入栈
+			while(p != null) {			
+				st.Push(p);			
+				p = p.lchild;
+			}		
+			
+			// 弹出栈的结点访问并进行处理，进行可循环处理
+			BinaryTree tp = st.GetTopEle();			
+			System.out.print(tp.data.v+"\t");
+			st.Pop();
+			p = tp.rchild;
+		}		
+	}	
+	// 非递归先序遍历
+	public void PreOrder2() {
+		BinaryTree p = this;
+		SequenStack<BinaryTree> st = new SequenStack<BinaryTree>();//栈容量10,使用链栈不用考虑此问题		
+		while(p != null || !st.IsEmpty()) {
+			// 先打印出该结点的值
+			while(p != null) {
+				System.out.print(p.data.v+"\t");
+				st.Push(p);
+				p = p.lchild;
+			}
+			p = st.GetTopEle().rchild;
+			st.Pop();
+		}
+	}
+	// 非递归后序序列遍历，难度较大，使用另外的标记上一个结点是否被访问。
+	public void PostOrder2() {
+		BinaryTree p = this;
+		SequenStack<BinaryTree> st = new SequenStack<BinaryTree>();//栈容量10,使用链栈不用考虑此问题		
+		int[] tag = new int[20];
+		
+		while(p != null || !st.IsEmpty()) {
+			// 先打印出该结点的值
+			while(p != null) {
+				st.Push(p);
+				p = p.lchild;
+				tag[st.SequenStackLength()-1] = 0; // 表示没有访问过
+			}
+			// 延后执行，读出该结点，并出栈好访问下一个结点
+			while(!st.IsEmpty() && tag[st.SequenStackLength()-1]==1) {
+				p = st.GetTopEle();
+				st.Pop();
+				System.out.print(p.data.v+"\t");
+				p = null; // 同下的break
+			}
+			// 到达栈顶结点，设置已经访问1，并将指针指向栈顶结点的右子树
+			if(!st.IsEmpty()) {
+				tag[st.SequenStackLength()-1] = 1;
+				p = st.GetTopEle().rchild;
+			}
+			//else {
+			//	break; // 防止最后一个出栈后，因为p指向前一个对象且没有为null，而不能退出
+			//}				
+		}
 	}
 	//由先序和中序参考共同建立二叉树
 	public static BinaryTree CreateBTree_PreInOrder(String pre,String in) {
@@ -157,15 +220,18 @@ public class BinaryTree {
 		BinaryTree btree = BinaryTree.CreateBTree_ExtendPre(new SString("ABC..D..E.FG..."));
 		System.out.println("递归中序序列遍历：");
 		btree.LDR(btree);
-		System.out.println("\n非递归中序序列遍历：");
-		btree.InOrder();
-		System.out.println("\n叶子结点数为（i+1）："+BinaryTree.BTreeLeaf(btree)+"\n深度："+BinaryTree.BTreeDepth(btree));
-		System.out.println("\n层次遍历：");
-		btree.LevelOrder();
+		System.out.println("\n非递归后序序列遍历2：");
+		btree.PostOrder2();
 		
-		BinaryTree btree2 = BinaryTree.CreateBTree_PreInOrder("ABCDEFG","CBDAEGF");
-		System.out.println("\n中序先序构造法之递归中序序序列遍历：");
-		btree2.LDR(btree2);
+//		System.out.println("\n非递归中序序列遍历：");
+//		btree.InOrder();
+//		System.out.println("\n叶子结点数为（i+1）："+BinaryTree.BTreeLeaf(btree)+"\n深度："+BinaryTree.BTreeDepth(btree));
+//		System.out.println("\n层次遍历：");
+//		btree.LevelOrder();
+//		
+//		BinaryTree btree2 = BinaryTree.CreateBTree_PreInOrder("ABCDEFG","CBDAEGF");
+//		System.out.println("\n中序先序构造法之递归中序序序列遍历：");
+//		btree2.LDR(btree2);
 	}
 
 }
